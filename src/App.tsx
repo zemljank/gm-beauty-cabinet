@@ -207,6 +207,7 @@ function App() {
   const [catalogSort, setCatalogSort] = useState<CatalogSortOption>("default");
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const sortMenuRef = useRef<HTMLDivElement | null>(null);
+  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [view, setView] = useState<ViewState>(() =>
     typeof window === "undefined" ? { page: "home", anchor: "top" } : parseHash(window.location.hash)
   );
@@ -219,7 +220,11 @@ function App() {
     }
 
     const handleHashChange = () => {
-      setView(parseHash(window.location.hash));
+      const nextView = parseHash(window.location.hash);
+      if (nextView.page !== "catalog") {
+        setIsFilterDrawerOpen(false);
+      }
+      setView(nextView);
     };
 
     handleHashChange();
@@ -263,6 +268,36 @@ function App() {
       document.removeEventListener("mousedown", handlePointerDown);
     };
   }, [isSortMenuOpen]);
+
+  useEffect(() => {
+    if (!isFilterDrawerOpen || typeof document === "undefined") {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isFilterDrawerOpen]);
+
+  useEffect(() => {
+    if (!isFilterDrawerOpen || typeof document === "undefined") {
+      return undefined;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsFilterDrawerOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isFilterDrawerOpen]);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -454,6 +489,7 @@ function App() {
   };
 
   const goToHome = (anchor: HomeAnchor = "top") => {
+    setIsFilterDrawerOpen(false);
     updateHash(anchor, true);
     setView({ page: "home", anchor });
   };
@@ -464,16 +500,19 @@ function App() {
   };
 
   const goToProduct = (productId: string) => {
+    setIsFilterDrawerOpen(false);
     updateHash(`product/${productId}`);
     setView({ page: "product", productId });
   };
 
   const goToCart = () => {
+    setIsFilterDrawerOpen(false);
     updateHash("cart");
     setView({ page: "cart" });
   };
 
   const goToFavorites = () => {
+    setIsFilterDrawerOpen(false);
     updateHash("favorites");
     setView({ page: "favorites" });
   };
@@ -776,6 +815,50 @@ function App() {
             </aside>
 
             <div className="catalog-main">
+              <div
+                className={`filter-drawer-overlay ${isFilterDrawerOpen ? "is-open" : ""}`}
+                role="presentation"
+                onClick={() => setIsFilterDrawerOpen(false)}
+              >
+                <aside
+                  className="filter-drawer"
+                  role="dialog"
+                  aria-modal="true"
+                  aria-label="Фильтры каталога"
+                  onClick={(event) => event.stopPropagation()}
+                >
+                  <FilterBar
+                    searchQuery={searchQuery}
+                    selectedBrands={selectedBrands}
+                    selectedCategories={selectedCategories}
+                    selectedConcerns={selectedConcerns}
+                    selectedSkinTypes={selectedSkinTypes}
+                    selectedIngredients={selectedIngredients}
+                    selectedTextures={selectedTextures}
+                    selectedZones={selectedZones}
+                    brandOptions={brandOptions}
+                    skinTypeOptions={skinTypeOptions}
+                    ingredientOptions={ingredientOptions}
+                    textureOptions={textureOptions}
+                    zoneOptions={zoneOptions}
+                    quickQueries={quickQueries}
+                    priceBounds={catalogPriceBounds}
+                    priceRange={priceRange}
+                    onClose={() => setIsFilterDrawerOpen(false)}
+                    onSearchChange={setSearchQuery}
+                    onBrandToggle={handleToggleBrand}
+                    onCategoryToggle={handleToggleCategory}
+                    onConcernToggle={handleToggleConcern}
+                    onSkinTypeToggle={handleToggleSkinType}
+                    onIngredientToggle={handleToggleIngredient}
+                    onTextureToggle={handleToggleTexture}
+                    onZoneToggle={handleToggleZone}
+                    onPriceChange={handlePriceRangeChange}
+                    onReset={handleResetFilters}
+                  />
+                </aside>
+              </div>
+
               {activeFilters.length > 0 ? (
                 <div className="catalog-toolbar">
                   <div className="catalog-toolbar-left">
@@ -787,6 +870,14 @@ function App() {
                   </div>
 
                   <div className="catalog-toolbar-meta">
+                    <button
+                      type="button"
+                      className="button-secondary catalog-filters-button"
+                      onClick={() => setIsFilterDrawerOpen(true)}
+                    >
+                      Фильтры
+                    </button>
+
                     <div className="catalog-results-meta">
                       <p>{visibleProducts.length} товаров найдено</p>
                     </div>
@@ -834,7 +925,66 @@ function App() {
                     </div>
                   </div>
                 </div>
-              ) : null}
+              ) : (
+                <div className="catalog-toolbar catalog-toolbar--empty">
+                  <div className="catalog-toolbar-left" />
+                  <div className="catalog-toolbar-meta">
+                    <button
+                      type="button"
+                      className="button-secondary catalog-filters-button"
+                      onClick={() => setIsFilterDrawerOpen(true)}
+                    >
+                      Фильтры
+                    </button>
+
+                    <div className="catalog-results-meta">
+                      <p>{visibleProducts.length} товаров найдено</p>
+                    </div>
+
+                    <div className={`catalog-sort ${isSortMenuOpen ? "is-open" : ""}`} ref={sortMenuRef}>
+                      <button
+                        type="button"
+                        className="catalog-sort-trigger"
+                        aria-label={`Сортировка: ${catalogSortOptions.find((option) => option.value === catalogSort)?.label ?? "По умолчанию"}`}
+                        aria-haspopup="menu"
+                        aria-expanded={isSortMenuOpen}
+                        onClick={() => setIsSortMenuOpen((current) => !current)}
+                      >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path
+                            d="M4 7h10M4 12h7M4 17h4m11-10v10m0 0-3-3m3 3 3-3"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="1.9"
+                          />
+                        </svg>
+                      </button>
+
+                      {isSortMenuOpen ? (
+                        <div className="catalog-sort-menu" role="menu">
+                          {catalogSortOptions.map((option) => (
+                            <button
+                              key={option.value}
+                              type="button"
+                              role="menuitemradio"
+                              aria-checked={catalogSort === option.value}
+                              className={`catalog-sort-option ${catalogSort === option.value ? "is-active" : ""}`}
+                              onClick={() => {
+                                setCatalogSort(option.value);
+                                setIsSortMenuOpen(false);
+                              }}
+                            >
+                              {option.label}
+                            </button>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <section className="catalog-grid">
                 {visibleProducts.map((product) => (

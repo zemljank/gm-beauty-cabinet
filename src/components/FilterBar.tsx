@@ -22,6 +22,7 @@ type FilterBarProps = {
   quickQueries: readonly string[];
   priceBounds: PriceRange;
   priceRange: PriceRange;
+  onClose?: () => void;
   onBrandToggle: (value: string) => void;
   onCategoryToggle: (value: ProductCategory) => void;
   onConcernToggle: (value: string) => void;
@@ -70,6 +71,7 @@ export default function FilterBar({
   quickQueries,
   priceBounds,
   priceRange,
+  onClose,
   onBrandToggle,
   onCategoryToggle,
   onConcernToggle,
@@ -103,26 +105,43 @@ export default function FilterBar({
     <section className="filter-shell" id="filters">
       <div className="filter-header">
         <h2>Фильтры</h2>
-        <button className="filter-reset" type="button" onClick={onReset} aria-label="Сбросить фильтры">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              d="M4.5 7h9M4.5 12h12M4.5 17h8"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="1.55"
-            />
-            <path
-              d="M16.5 6.5l3 3M19.5 6.5l-3 3"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="1.55"
-            />
-          </svg>
-        </button>
+        <div className="filter-header-actions">
+          {onClose ? (
+            <button className="filter-close" type="button" onClick={onClose} aria-label="Закрыть фильтры">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M7 7l10 10M17 7 7 17"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="1.7"
+                />
+              </svg>
+            </button>
+          ) : null}
+
+          <button className="filter-reset" type="button" onClick={onReset} aria-label="Сбросить фильтры">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M4.5 7h9M4.5 12h12M4.5 17h8"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="1.55"
+              />
+              <path
+                d="M16.5 6.5l3 3M19.5 6.5l-3 3"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="1.55"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
 
       <label className="filter-search">

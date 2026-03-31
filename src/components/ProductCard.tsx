@@ -79,7 +79,7 @@ export default function ProductCard({
   const handleOpen = () => onOpen?.(product.id);
 
   return (
-    <article className={`product-card product-card--${variant}`}>
+    <article className={`product-card product-card--${variant} ${isInCart ? "is-in-cart" : ""}`}>
       <div className="product-media">
         <span className="product-badge">{currentBadge}</span>
 
