@@ -101,12 +101,12 @@ export default function CartView({
                 <div className="cart-price">{formatPrice(product.price)} ₽</div>
 
                 <div className="cart-qty-control">
-                  <button type="button" onClick={() => onDecrease(product.id)}>
-                    -
-                  </button>
-                  <span>{quantity}</span>
                   <button type="button" onClick={() => onIncrease(product.id)}>
                     +
+                  </button>
+                  <span>{quantity}</span>
+                  <button type="button" onClick={() => onDecrease(product.id)}>
+                    -
                   </button>
                 </div>
 

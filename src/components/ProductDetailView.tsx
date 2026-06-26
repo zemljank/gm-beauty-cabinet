@@ -181,7 +181,7 @@ export default function ProductDetailView({
             <ProductCard
               key={item.id}
               product={item}
-              variant="compact"
+              variant="spotlight"
               badgeText="Рекомендуем"
               actionLabel="Открыть"
               cartQuantity={cartQuantityById.get(item.id) ?? 0}
