@@ -490,7 +490,9 @@
 
 @media (max-width: 767px) {
   .page-shell {
-    padding: var(--page-shell-top) var(--page-shell-inline) var(--page-shell-bottom);
+    --mobile-topbar-size: 42px;
+    --mobile-topbar-height: calc(var(--mobile-topbar-size) + 18px);
+    padding: var(--mobile-topbar-height) var(--page-shell-inline) var(--page-shell-bottom);
   }
 
   .hero-card {
@@ -937,16 +939,25 @@
 }
 
 @media (max-width: 1023px) {
+  .page-shell {
+    --mobile-topbar-size: 46px;
+    --mobile-topbar-height: calc(var(--mobile-topbar-size) + 20px);
+    padding-top: var(--mobile-topbar-height);
+  }
+
   .topbar {
     --mobile-topbar-size: 46px;
     --mobile-logo-width: clamp(178px, 28vw, 228px);
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
     z-index: 50;
     grid-template-columns: auto 1fr auto;
     gap: 12px;
     align-items: center;
-    margin-inline: calc(50% - 50vw);
+    margin-inline: 0;
     padding: 10px clamp(14px, 3.4vw, 24px);
     border-top: none;
     border-radius: 0 0 18px 18px;
