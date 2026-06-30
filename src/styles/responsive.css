@@ -491,8 +491,7 @@
 @media (max-width: 767px) {
   .page-shell {
     --mobile-topbar-size: 42px;
-    --mobile-topbar-height: calc(var(--mobile-topbar-size) + 18px);
-    padding: var(--mobile-topbar-height) var(--page-shell-inline) var(--page-shell-bottom);
+    --mobile-topbar-height: calc(var(--mobile-topbar-size) + 18px + env(safe-area-inset-top, 0px));
   }
 
   .hero-card {
@@ -941,8 +940,14 @@
 @media (max-width: 1023px) {
   .page-shell {
     --mobile-topbar-size: 46px;
-    --mobile-topbar-height: calc(var(--mobile-topbar-size) + 20px);
+    --mobile-topbar-height: calc(var(--mobile-topbar-size) + 20px + env(safe-area-inset-top, 0px));
     padding-top: var(--mobile-topbar-height);
+    padding-bottom: var(--page-shell-bottom);
+    padding-inline: var(--page-shell-inline);
+  }
+
+  .page--home .hero-card {
+    margin-top: 0;
   }
 
   .topbar {
@@ -957,8 +962,11 @@
     grid-template-columns: auto 1fr auto;
     gap: 12px;
     align-items: center;
-    margin-inline: 0;
-    padding: 10px clamp(14px, 3.4vw, 24px);
+    margin: 0;
+    padding:
+      calc(10px + env(safe-area-inset-top, 0px))
+      clamp(14px, 3.4vw, 24px)
+      10px;
     border-top: none;
     border-radius: 0 0 18px 18px;
     border-color: rgba(29, 33, 39, 0.08);
@@ -1220,7 +1228,10 @@
   .topbar {
     --mobile-topbar-size: 42px;
     --mobile-logo-width: clamp(144px, 48vw, 178px);
-    padding: 9px 14px;
+    padding:
+      calc(9px + env(safe-area-inset-top, 0px))
+      14px
+      9px;
     border-radius: 0 0 16px 16px;
   }
 

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import CartView from "./components/CartView";
 import FilterBar from "./components/FilterBar";
 import FavoritesView from "./components/FavoritesView";
@@ -1189,13 +1189,20 @@ function App() {
     </header>
   );
 
+  const renderLayout = (mainClassName: string, content: ReactNode) => (
+    <>
+      {renderTopBar()}
+      <div className="page-shell" id="top">
+        <main className={mainClassName}>{content}</main>
+      </div>
+    </>
+  );
+
   if (view.page === "product") {
     if (!currentProduct) {
-      return (
-        <div className="page-shell" id="top">
-          <main className="page page--catalog">
-            {renderTopBar()}
-            <section className="section-card section-card--soft empty-state">
+      return renderLayout(
+        "page page--catalog",
+        <section className="section-card section-card--soft empty-state">
               <p className="section-kicker">Товар не найден</p>
               <h1>Эта карточка пока недоступна</h1>
               <p>Вернем тебя обратно в каталог, чтобы можно было продолжить выбор без потери ритма.</p>
@@ -1203,16 +1210,12 @@ function App() {
                 Вернуться в каталог
               </button>
             </section>
-          </main>
-        </div>
       );
     }
 
-    return (
-      <div className="page-shell" id="top">
-        <main className="page">
-          {renderTopBar()}
-          <ProductDetailView
+    return renderLayout(
+      "page",
+      <ProductDetailView
             product={currentProduct}
             relatedProducts={relatedProducts}
             cartQuantityById={cartQuantityById}
@@ -1225,17 +1228,13 @@ function App() {
             onOpenProduct={goToProduct}
             onToggleFavorite={handleToggleFavorite}
           />
-        </main>
-      </div>
     );
   }
 
   if (view.page === "favorites") {
-    return (
-      <div className="page-shell" id="top">
-        <main className="page page--catalog">
-          {renderTopBar()}
-          <FavoritesView
+    return renderLayout(
+      "page page--catalog",
+      <FavoritesView
             items={favoriteProducts}
             cartQuantityById={cartQuantityById}
             favoriteIds={favoriteIds}
@@ -1246,17 +1245,13 @@ function App() {
             onDecreaseCart={handleDecreaseQuantity}
             onToggleFavorite={handleToggleFavorite}
           />
-        </main>
-      </div>
     );
   }
 
   if (view.page === "cart") {
-    return (
-      <div className="page-shell" id="top">
-        <main className="page">
-          {renderTopBar()}
-          <CartView
+    return renderLayout(
+      "page",
+      <CartView
             items={cartItems}
             subtotal={cartSubtotal}
             totalItems={cartCount}
@@ -1272,17 +1267,13 @@ function App() {
             onRemove={handleRemoveFromCart}
             onToggleFavorite={handleToggleFavorite}
           />
-        </main>
-      </div>
     );
   }
 
   if (view.page === "catalog") {
-    return (
-      <div className="page-shell" id="top">
-        <main className="page">
-          {renderTopBar()}
-
+    return renderLayout(
+      "page",
+      <>
           <section className="section-card catalog-hero-card">
             <div className="catalog-hero-copy">
               <h1>Каталог домашнего ухода</h1>
@@ -1540,16 +1531,13 @@ function App() {
               ) : null}
             </div>
           </section>
-        </main>
-      </div>
+      </>
     );
   }
 
-  return (
-    <div className="page-shell" id="top">
-      <main className="page page--home">
-        {renderTopBar()}
-
+  return renderLayout(
+    "page page--home",
+    <>
         <section
           className="hero-card"
           aria-label="Главный баннер"
@@ -1834,8 +1822,7 @@ function App() {
             ))}
           </div>
         </section>
-      </main>
-    </div>
+    </>
   );
 }
 
