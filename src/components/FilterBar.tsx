@@ -46,6 +46,7 @@ function FilterOption({ isActive, label, onClick }: FilterOptionProps) {
     <button
       type="button"
       className={`filter-option-button ${isActive ? "is-active" : ""}`}
+      aria-pressed={isActive}
       onClick={onClick}
     >
       <span className="filter-option-box" aria-hidden="true" />
@@ -102,7 +103,7 @@ export default function FilterBar({
   };
 
   return (
-    <section className="filter-shell" id="filters">
+    <section className="filter-shell" id={onClose ? "drawer-filters" : "filters"}>
       <div className="filter-header">
         <h2>Фильтры</h2>
         <div className="filter-header-actions">

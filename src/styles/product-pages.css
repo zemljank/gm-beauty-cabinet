@@ -10,7 +10,7 @@
 
 .results-bar h2 {
   margin: 0;
-  font-family: "Cormorant Garamond", Georgia, serif;
+  font-family: "Cormorant Garamond Variable", Georgia, serif;
   font-size: 32px;
 }
 
@@ -200,7 +200,7 @@
 }
 
 .product-fallback {
-  font-family: "Cormorant Garamond", Georgia, serif;
+  font-family: "Cormorant Garamond Variable", Georgia, serif;
   font-size: 40px;
   font-weight: 700;
   color: rgba(49, 51, 58, 0.56);
@@ -766,7 +766,7 @@
 }
 
 .detail-media span {
-  font-family: "Cormorant Garamond", Georgia, serif;
+  font-family: "Cormorant Garamond Variable", Georgia, serif;
   font-size: 32px;
   color: var(--gm-soft);
 }
@@ -935,7 +935,7 @@
 }
 
 .cart-summary h2 {
-  font-family: "Cormorant Garamond", Georgia, serif;
+  font-family: "Cormorant Garamond Variable", Georgia, serif;
   font-size: 28px;
 }
 

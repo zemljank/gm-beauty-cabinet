@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { BrandSection, ConcernSection, ShoppingHelp, SiteFooter } from "./components/StorefrontContent";
+import { careConcerns } from "./data/storefront";
 import CartView from "./components/CartView";
 import FilterBar from "./components/FilterBar";
 import FavoritesView from "./components/FavoritesView";
@@ -55,7 +57,8 @@ type ViewState =
   | { page: "catalog"; anchor: CatalogAnchor }
   | { page: "product"; productId: string }
   | { page: "favorites" }
-  | { page: "cart" };
+  | { page: "cart" }
+  | { page: "help" };
 
 const navigation = [
   { label: "Каталог", page: "catalog", anchor: "catalog" },
@@ -84,13 +87,7 @@ const benefits = [
   }
 ] as const;
 
-const quickQueries = [
-  "Пигментация",
-  "Акне",
-  "Чувствительность",
-  "Антивозрастное",
-  "Восстановление"
-] as const;
+const quickQueries = careConcerns.map((item) => item.query);
 
 const showcaseCategories: Array<{ id: ProductCategory; description: string }> = [
   {
@@ -105,6 +102,10 @@ const showcaseCategories: Array<{ id: ProductCategory; description: string }> = 
     id: "cream",
     description: "Текстуры для ежедневного комфорта, восстановления и защиты барьера."
   },
+  { id: "toner", description: "Тоники и лосьоны для следующего этапа после очищения." },
+  { id: "mask", description: "Маски для дополнительного ухода в удобном формате." },
+  { id: "set", description: "Готовые наборы средств из одной линейки." },
+  { id: "body", description: "Средства для ухода за телом, волосами и руками." },
   {
     id: "sun-care",
     description: "Финишный этап дневного ухода с акцентом на фотозащиту."
@@ -117,7 +118,7 @@ const doctorChoiceIds = [
   "egia-vitamin-c-serum",
   "angio-spf-fluid"
 ] as const;
-const popularProductIds = new Set<string>(doctorChoiceIds);
+const doctorChoiceProductIds = new Set<string>(doctorChoiceIds);
 
 const CART_STORAGE_KEY = "gm-beauty-cart";
 const FAVORITES_STORAGE_KEY = "gm-beauty-favorites";
@@ -199,12 +200,12 @@ const homeHeroSlides: HomeHeroSlide[] = [
     ],
     description:
       "Hydrating Cleanser, AOX Serum и Exfoliating Polish для гладкой, свежей и визуально более сияющей кожи.",
-    buttonLabel: "Смотреть ZO",
+    buttonLabel: "Подробнее о средстве",
     action: { type: "product", productId: "zo-hydrating-cleanser" },
     sceneImage: {
-      src: "/hero/gm-hero-zo-routine.png",
-      tabletSrc: "/hero/gm-hero-zo-tablet.jpg",
-      mobileSrc: "/hero/gm-hero-zo-mobile.jpg",
+      src: "/hero/optimized/gm-hero-zo-routine.webp",
+      tabletSrc: "/hero/optimized/gm-hero-zo-tablet.webp",
+      mobileSrc: "/hero/optimized/gm-hero-zo-mobile.webp",
       alt: "Три средства ZO Skin Health: очищающее средство, сыворотка и полиш для домашнего ухода.",
       position: "72% center"
     },
@@ -220,12 +221,12 @@ const homeHeroSlides: HomeHeroSlide[] = [
     ],
     description:
       "Ceramide Repair Cream, Vitamin C Serum и Sunscreen Fluid SPF 30 для спокойного дневного ритуала с комфортом и защитой.",
-    buttonLabel: "Открыть подборку",
+    buttonLabel: "Подробнее о креме",
     action: { type: "product", productId: "angio-ceramide-restoring-cream" },
     sceneImage: {
-      src: "/hero/gm-hero-angio-routine.png",
-      tabletSrc: "/hero/gm-hero-daily-tablet.jpg",
-      mobileSrc: "/hero/gm-hero-daily-mobile.jpg",
+      src: "/hero/optimized/gm-hero-angio-routine.webp",
+      tabletSrc: "/hero/optimized/gm-hero-daily-tablet.webp",
+      mobileSrc: "/hero/optimized/gm-hero-daily-mobile.webp",
       alt: "Три средства Angiopharm: восстанавливающий крем, витаминная сыворотка и солнцезащитный флюид.",
       position: "70% center"
     },
@@ -244,9 +245,9 @@ const homeHeroSlides: HomeHeroSlide[] = [
     buttonLabel: "Смотреть уходы",
     action: { type: "product", productId: "angio-anti-couperose-serum" },
     sceneImage: {
-      src: "/hero/gm-hero-sensitive-care.jpg",
-      tabletSrc: "/hero/gm-hero-sensitive-tablet.jpg",
-      mobileSrc: "/hero/gm-hero-sensitive-mobile.jpg",
+      src: "/hero/optimized/gm-hero-sensitive-care.webp",
+      tabletSrc: "/hero/optimized/gm-hero-sensitive-tablet.webp",
+      mobileSrc: "/hero/optimized/gm-hero-sensitive-mobile.webp",
       alt: "Средства Angiopharm Anti Couperose и Azelaine Soft Cream для чувствительной кожи.",
       position: "right center"
     },
@@ -262,12 +263,12 @@ const homeHeroSlides: HomeHeroSlide[] = [
     ],
     description:
       "Домашний уход, который поддерживает кожу между визитами к специалисту и помогает не перегружать ежедневную рутину.",
-    buttonLabel: "Смотреть подборку",
+    buttonLabel: "Подробнее о средстве",
     action: { type: "product", productId: "angio-pdrn-restoring-serum" },
     sceneImage: {
-      src: "/hero/gm-hero-recovery-desktop.jpg",
-      tabletSrc: "/hero/gm-hero-recovery-tablet.jpg",
-      mobileSrc: "/hero/gm-hero-recovery-mobile.jpg",
+      src: "/hero/optimized/gm-hero-recovery-desktop.webp",
+      tabletSrc: "/hero/optimized/gm-hero-recovery-tablet.webp",
+      mobileSrc: "/hero/optimized/gm-hero-recovery-mobile.webp",
       alt: "Средства Angiopharm с церамидами, ПДРН и восстанавливающая маска для ухода после процедур.",
       position: "right center"
     },
@@ -290,11 +291,11 @@ function TopbarFavoriteIcon() {
   );
 }
 
-function TopbarProfileIcon() {
+function TopbarHelpIcon() {
   return (
     <svg className="topbar-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
       <path
-        d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4m-6.4 7.2a7.7 7.7 0 0 1 12.8 0"
+        d="M9 8a3 3 0 0 1 6 0c0 2-3 2-3 4m0 4v.1M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0"
         fill="none"
         stroke="currentColor"
         strokeLinecap="round"
@@ -413,15 +414,25 @@ function toggleSelection<T>(items: T[], value: T) {
   return items.includes(value) ? items.filter((item) => item !== value) : [...items, value];
 }
 
+function decodeProductId(value: string) {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return "";
+  }
+}
+
 function parseHash(hashValue: string): ViewState {
   const hash = hashValue.replace(/^#/, "");
 
   if (hash.startsWith("product/")) {
     return {
       page: "product",
-      productId: decodeURIComponent(hash.slice("product/".length))
+      productId: decodeProductId(hash.slice("product/".length))
     };
   }
+
+  if (hash === "help") return { page: "help" };
 
   if (hash === "cart") {
     return { page: "cart" };
@@ -465,7 +476,7 @@ function readCartFromStorage(): CartLine[] {
         typeof item === "object" &&
         item !== null &&
         typeof item.productId === "string" &&
-        typeof item.quantity === "number"
+        Number.isSafeInteger(item.quantity) && item.quantity > 0 && products.some((product) => product.id === item.productId)
     );
   } catch {
     return [];
@@ -509,8 +520,8 @@ function App() {
   const [catalogSort, setCatalogSort] = useState<CatalogSortOption>("default");
   const [catalogViewMode, setCatalogViewMode] = useState<"three" | "two">("three");
   const [catalogPagination, setCatalogPagination] = useState({ page: 1, filterKey: "" });
-  const [showOnlyAvailable, setShowOnlyAvailable] = useState(false);
-  const [showOnlyPopular, setShowOnlyPopular] = useState(false);
+  const [showOnlyWithPhoto, setShowOnlyWithPhoto] = useState(false);
+  const [showOnlyDoctorChoice, setShowOnlyDoctorChoice] = useState(false);
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const sortMenuRef = useRef<HTMLDivElement | null>(null);
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
@@ -550,7 +561,7 @@ function App() {
       return;
     }
 
-    window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+    try { window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart)); } catch { /* Storage may be unavailable in private browsing. */ }
   }, [cart]);
 
   useEffect(() => {
@@ -558,7 +569,7 @@ function App() {
       return;
     }
 
-    window.localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favorites));
+    try { window.localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favorites)); } catch { /* Keep the current session usable without storage. */ }
   }, [favorites]);
 
   useEffect(() => {
@@ -570,6 +581,7 @@ function App() {
     const closeMenuOnLaptop = () => {
       if (laptopQuery.matches) {
         setIsTopbarMenuOpen(false);
+        setIsFilterDrawerOpen(false);
       }
     };
 
@@ -631,6 +643,36 @@ function App() {
   }, [isFilterDrawerOpen, isTopbarMenuOpen]);
 
   useEffect(() => {
+    if (!isFilterDrawerOpen && !isTopbarMenuOpen) return;
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const panel = document.querySelector<HTMLElement>(isFilterDrawerOpen ? ".filter-drawer" : ".topbar-mobile-menu");
+    const focusable = () => Array.from(panel?.querySelectorAll<HTMLElement>(
+      'button, a[href], input, summary, [tabindex="0"]'
+    ) ?? []).filter((element) => element.getClientRects().length > 0);
+    // Visibility transitions finish before moving focus into the panel.
+    const focusTimer = window.setTimeout(() => {
+      if (!panel?.contains(document.activeElement)) focusable()[0]?.focus();
+    }, 240);
+    const trapFocus = (event: KeyboardEvent) => {
+      if (event.key !== "Tab") return;
+      const elements = focusable();
+      const first = elements[0];
+      const last = elements[elements.length - 1];
+      if (event.shiftKey && (document.activeElement === first || !panel?.contains(document.activeElement))) {
+        event.preventDefault(); last?.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || !panel?.contains(document.activeElement))) {
+        event.preventDefault(); first?.focus();
+      }
+    };
+    document.addEventListener("keydown", trapFocus);
+    return () => {
+      window.clearTimeout(focusTimer);
+      document.removeEventListener("keydown", trapFocus);
+      if (previousFocus?.isConnected) previousFocus.focus({ preventScroll: true });
+    };
+  }, [isFilterDrawerOpen, isTopbarMenuOpen]);
+
+  useEffect(() => {
     if (typeof window === "undefined" || view.page !== "home" || isHeroAutoplayPaused) {
       return;
     }
@@ -653,7 +695,8 @@ function App() {
       return;
     }
 
-    if (view.page === "product" || view.page === "cart" || view.page === "favorites") {
+    if (view.page === "product" || view.page === "cart" || view.page === "favorites" || view.page === "help") {
+      window.scrollTo({ top: 0, behavior: "instant" });
       return;
     }
 
@@ -688,8 +731,8 @@ function App() {
           zones: selectedZones,
           priceRange
         })
-          .filter((product) => !showOnlyAvailable || Boolean(product.imageUrl))
-          .filter((product) => !showOnlyPopular || popularProductIds.has(product.id)),
+          .filter((product) => !showOnlyWithPhoto || Boolean(product.imageUrl))
+          .filter((product) => !showOnlyDoctorChoice || doctorChoiceProductIds.has(product.id)),
         catalogSort
       ),
     [
@@ -703,8 +746,8 @@ function App() {
       selectedZones,
       priceRange,
       catalogSort,
-      showOnlyAvailable,
-      showOnlyPopular
+      showOnlyWithPhoto,
+      showOnlyDoctorChoice
     ]
   );
 
@@ -719,8 +762,8 @@ function App() {
     selectedZones,
     priceRange,
     catalogSort,
-    showOnlyAvailable,
-    showOnlyPopular
+    showOnlyWithPhoto,
+    showOnlyDoctorChoice
   });
   const catalogPageCount = Math.max(1, Math.ceil(visibleProducts.length / CATALOG_PAGE_SIZE));
   const activeCatalogPage =
@@ -823,22 +866,20 @@ function App() {
   );
 
   const activeFilters = [
-    searchQuery ? `Поиск: ${searchQuery}` : null,
-    ...selectedCategories.map((item) => {
-      const label = categories.find((entry) => entry.id === item)?.label ?? item;
-      return `Категория: ${label}`;
-    }),
-    ...selectedSkinTypes.map((item) => `Тип кожи: ${item}`),
-    ...selectedConcerns.map((item) => `Проблема: ${item}`),
-    ...selectedBrands.map((item) => `Бренд: ${item}`),
-    ...selectedIngredients.map((item) => `Актив: ${item}`),
-    ...selectedTextures.map((item) => `Текстура: ${item}`),
-    ...selectedZones.map((item) => `Зона: ${item}`),
-    priceRange.min !== catalogPriceBounds.min || priceRange.max !== catalogPriceBounds.max
-      ? `Цена: ${formatPrice(priceRange.min)} - ${formatPrice(priceRange.max)} ₽`
-      : null
-  ].filter((item): item is string => Boolean(item));
-  const hasCatalogToolbarMeta = activeFilters.length > 0 || showOnlyAvailable || showOnlyPopular;
+    ...(searchQuery ? [{ label: `Поиск: ${searchQuery}`, remove: () => setSearchQuery("") }] : []),
+    ...selectedCategories.map(item => ({ label: `Категория: ${getCategoryLabel(item)}`, remove: () => setSelectedCategories(values => values.filter(value => value !== item)) })),
+    ...([
+      [selectedSkinTypes, setSelectedSkinTypes, "Тип кожи"],
+      [selectedConcerns, setSelectedConcerns, "Потребность"],
+      [selectedBrands, setSelectedBrands, "Бренд"],
+      [selectedIngredients, setSelectedIngredients, "Актив"],
+      [selectedTextures, setSelectedTextures, "Текстура"],
+      [selectedZones, setSelectedZones, "Зона"]
+    ] as const).flatMap(([values, setter, prefix]) => values.map(item => ({ label: `${prefix}: ${item}`, remove: () => setter(current => current.filter(value => value !== item)) }))),
+    ...(priceRange.min !== catalogPriceBounds.min || priceRange.max !== catalogPriceBounds.max
+      ? [{ label: `Цена: ${formatPrice(priceRange.min)} – ${formatPrice(priceRange.max)} ₽`, remove: () => setPriceRange(catalogPriceBounds) }] : [])
+  ];
+  const hasCatalogToolbarMeta = activeFilters.length > 0 || showOnlyWithPhoto || showOnlyDoctorChoice;
 
   const updateHash = (nextHash: string, shouldScrollToAnchor = false) => {
     if (typeof window === "undefined") {
@@ -945,8 +986,8 @@ function App() {
     setSelectedIngredients([]);
     setSelectedTextures([]);
     setSelectedZones([]);
-    setShowOnlyAvailable(false);
-    setShowOnlyPopular(false);
+    setShowOnlyWithPhoto(false);
+    setShowOnlyDoctorChoice(false);
     setPriceRange(getDefaultPriceRange());
     goToCatalog("catalog");
   };
@@ -960,8 +1001,8 @@ function App() {
     setSelectedIngredients([]);
     setSelectedTextures([]);
     setSelectedZones([]);
-    setShowOnlyAvailable(false);
-    setShowOnlyPopular(false);
+    setShowOnlyWithPhoto(false);
+    setShowOnlyDoctorChoice(false);
     setPriceRange(getDefaultPriceRange());
     goToCatalog("catalog");
   };
@@ -1010,8 +1051,8 @@ function App() {
     setSelectedIngredients([]);
     setSelectedTextures([]);
     setSelectedZones([]);
-    setShowOnlyAvailable(false);
-    setShowOnlyPopular(false);
+    setShowOnlyWithPhoto(false);
+    setShowOnlyDoctorChoice(false);
     setPriceRange(getDefaultPriceRange());
   };
 
@@ -1100,9 +1141,9 @@ function App() {
           <span className="topbar-action-label">Избранное</span>
           {favoritesCount > 0 ? <span className="topbar-count-badge topbar-count-badge--favorites">{favoritesCount}</span> : null}
         </button>
-        <button type="button" className="topbar-action-button" aria-label="Профиль">
-          <TopbarProfileIcon />
-          <span className="topbar-action-label">Профиль</span>
+        <button type="button" className="topbar-action-button" aria-label="Помощь" onClick={() => updateHash("help")}>
+          <TopbarHelpIcon />
+          <span className="topbar-action-label">Помощь</span>
         </button>
         <button
           type="button"
@@ -1116,6 +1157,10 @@ function App() {
         </button>
       </div>
 
+      <button type="button" className="mobile-cart-shortcut" onClick={goToCart} aria-label={`Корзина, товаров: ${cartCount}`}>
+        <TopbarCartIcon />
+        {cartCount > 0 && <span>{cartCount > 99 ? "99+" : cartCount}</span>}
+      </button>
       <button
         type="button"
         className="topbar-menu-button"
@@ -1140,6 +1185,7 @@ function App() {
         id="topbar-mobile-menu"
         className="topbar-mobile-menu"
         aria-hidden={!isTopbarMenuOpen}
+        inert={!isTopbarMenuOpen}
       >
         <p className="topbar-mobile-menu-kicker">GM Beauty</p>
         <div className="topbar-mobile-menu-list" aria-label="Мобильная навигация">
@@ -1170,10 +1216,10 @@ function App() {
           <button
             type="button"
             className="topbar-mobile-action"
-            onClick={() => setIsTopbarMenuOpen(false)}
+            onClick={() => { setIsTopbarMenuOpen(false); updateHash("help"); }}
           >
-            <TopbarProfileIcon />
-            <span>Профиль</span>
+            <TopbarHelpIcon />
+            <span>Помощь</span>
           </button>
           <button
             type="button"
@@ -1191,12 +1237,16 @@ function App() {
 
   const renderLayout = (mainClassName: string, content: ReactNode) => (
     <>
+      <a className="skip-link" href="#main-content" onClick={(event) => { event.preventDefault(); document.getElementById("main-content")?.focus(); }}>Перейти к содержимому</a>
       {renderTopBar()}
       <div className="page-shell" id="top">
-        <main className={mainClassName}>{content}</main>
+        <main tabIndex={-1} id="main-content" className={mainClassName}>{content}</main>
+        <SiteFooter />
       </div>
     </>
   );
+
+  if (view.page === "help") return renderLayout("page", <ShoppingHelp />);
 
   if (view.page === "product") {
     if (!currentProduct) {
@@ -1205,7 +1255,7 @@ function App() {
         <section className="section-card section-card--soft empty-state">
               <p className="section-kicker">Товар не найден</p>
               <h1>Эта карточка пока недоступна</h1>
-              <p>Вернем тебя обратно в каталог, чтобы можно было продолжить выбор без потери ритма.</p>
+              <p>Возможно, ссылка устарела. Откройте каталог и найдите средство по названию или бренду.</p>
               <button type="button" className="button-primary" onClick={() => goToCatalog("catalog")}>
                 Вернуться в каталог
               </button>
@@ -1317,6 +1367,7 @@ function App() {
               <div
                 className={`filter-drawer-overlay ${isFilterDrawerOpen ? "is-open" : ""}`}
                 role="presentation"
+                inert={!isFilterDrawerOpen}
                 onClick={() => setIsFilterDrawerOpen(false)}
               >
                 <aside
@@ -1355,15 +1406,17 @@ function App() {
                     onPriceChange={handlePriceRangeChange}
                     onReset={handleResetFilters}
                   />
+                  <div className="filter-drawer-footer"><button type="button" className="button-primary" onClick={() => setIsFilterDrawerOpen(false)}>Показать товары · {visibleProducts.length}</button></div>
                 </aside>
               </div>
 
+              <label className="catalog-search"><span className="sr-only">Поиск в каталоге</span><input type="search" value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Название средства или бренд" /></label>
               <div className={`catalog-toolbar ${!hasCatalogToolbarMeta ? "catalog-toolbar--empty" : ""}`}>
                 <div className="catalog-toolbar-left">
                   {activeFilters.length > 0 ? (
                     <div className="active-filters">
                       {activeFilters.map((item) => (
-                        <span key={item}>{item}</span>
+                        <button type="button" key={item.label} onClick={item.remove} aria-label={`Убрать фильтр: ${item.label}`}>{item.label}<span aria-hidden="true">×</span></button>
                       ))}
                     </div>
                   ) : null}
@@ -1381,27 +1434,25 @@ function App() {
                   <div className="catalog-toolbar-controls">
                     <button
                       type="button"
-                      className={`catalog-quick-toggle ${showOnlyAvailable ? "is-active" : ""}`}
-                      aria-pressed={showOnlyAvailable}
-                      onClick={() => setShowOnlyAvailable((current) => !current)}
+                      className={`catalog-quick-toggle ${showOnlyWithPhoto ? "is-active" : ""}`}
+                      aria-pressed={showOnlyWithPhoto}
+                      onClick={() => setShowOnlyWithPhoto((current) => !current)}
                     >
-                      В наличии
+                      С фото
                     </button>
                     <button
                       type="button"
-                      className={`catalog-quick-toggle ${showOnlyPopular ? "is-active" : ""}`}
-                      aria-pressed={showOnlyPopular}
-                      onClick={() => setShowOnlyPopular((current) => !current)}
+                      className={`catalog-quick-toggle ${showOnlyDoctorChoice ? "is-active" : ""}`}
+                      aria-pressed={showOnlyDoctorChoice}
+                      onClick={() => setShowOnlyDoctorChoice((current) => !current)}
                     >
-                      Популярные
+                      Выбор врача
                     </button>
                   </div>
 
-                  {hasCatalogToolbarMeta ? (
-                    <div className="catalog-results-meta">
-                      <p>{visibleProducts.length} товаров найдено</p>
-                    </div>
-                  ) : null}
+                  <div className="catalog-results-meta">
+                    <p role="status">Найдено: {visibleProducts.length}</p>
+                  </div>
 
                   <button
                     type="button"
@@ -1488,6 +1539,8 @@ function App() {
                   />
                 ))}
               </section>
+
+              {visibleProducts.length === 0 ? <section className="section-card empty-state"><h2>Ничего не найдено</h2><p>Попробуйте другое название или сбросьте фильтры, чтобы увидеть весь каталог.</p><button type="button" className="button-secondary" onClick={handleResetFilters}>Сбросить фильтры</button></section> : null}
 
               {catalogPageCount > 1 ? (
                 <nav className="catalog-pagination" aria-label="Страницы каталога">
@@ -1668,6 +1721,9 @@ function App() {
                           <img
                             className="hero-slide-scene-image"
                             src={slide.sceneImage.src}
+                            loading={index === 0 ? "eager" : "lazy"}
+                            fetchPriority={index === 0 ? "high" : "low"}
+                            decoding="async"
                             alt={slide.sceneImage.alt}
                             style={{ objectPosition: slide.sceneImage.position ?? "center" }}
                           />
@@ -1749,12 +1805,12 @@ function App() {
         <section className="section-card" id="categories">
           <div className="section-heading">
             <div>
-              <p className="section-kicker">Популярные категории</p>
-              <h2>Собрали каталог в понятные сценарии ухода</h2>
+              <p className="section-kicker">Категории ухода</p>
+              <h2>Всё для вашего ухода</h2>
             </div>
             <p>
-              На главной остается только легкая витрина: категории, запросы кожи и несколько
-              стартовых рекомендаций без длинного каталога ниже.
+              Выберите этап ухода: от очищения до защиты от солнца. В каждой категории —
+              средства с фотографиями, описаниями и ценами.
             </p>
           </div>
 
@@ -1783,14 +1839,10 @@ function App() {
             ))}
           </div>
 
-          <div className="concern-strip" id="concerns" aria-label="Быстрые сценарии ухода">
-            {quickQueries.map((item) => (
-              <button key={item} type="button" onClick={() => handleConcernSelect(item)}>
-                {item}
-              </button>
-            ))}
-          </div>
         </section>
+
+        <ConcernSection onSelect={handleConcernSelect} />
+        <BrandSection onSelect={(brand) => { handleResetFilters(); setSelectedBrands([brand]); goToCatalog(); }} />
 
         <section className="section-card section-card--soft doctor-section" id="doctor">
           <div className="section-heading">
@@ -1822,6 +1874,7 @@ function App() {
             ))}
           </div>
         </section>
+        <ShoppingHelp compact />
     </>
   );
 }
