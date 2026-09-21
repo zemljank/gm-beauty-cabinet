@@ -58,6 +58,16 @@ export default function CartView({
     }
   };
 
+  const shareOrder = async () => {
+    try {
+      await navigator.share({ title: "Мой список GM BEAUTY", text: orderText });
+    } catch (error) {
+      if (!(error instanceof DOMException && error.name === "AbortError")) {
+        setCopyStatus("Не удалось открыть отправку. Скопируйте список и отправьте его администратору.");
+      }
+    }
+  };
+
   if (items.length === 0) {
     return (
       <section className="cart-shell section-card section-card--soft">
@@ -168,6 +178,7 @@ export default function CartView({
             {isListOpen && <div id="order-list" className="order-list">
               <label htmlFor="order-text">Список для администратора</label>
               <textarea id="order-text" readOnly value={orderText} rows={9} onFocus={(event) => event.currentTarget.select()} />
+              {typeof navigator.share === "function" && <button type="button" className="button-primary" onClick={shareOrder}>Поделиться списком</button>}
               <button type="button" className="button-secondary" onClick={copyOrder}>Скопировать список</button>
               <p role="status">{copyStatus}</p>
               <a className="content-link" href="https://gm-beauty.ru/" target="_blank" rel="noreferrer">Перейти на сайт клиники ↗</a>

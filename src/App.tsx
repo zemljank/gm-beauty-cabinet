@@ -203,9 +203,9 @@ const homeHeroSlides: HomeHeroSlide[] = [
     buttonLabel: "Подробнее о средстве",
     action: { type: "product", productId: "zo-hydrating-cleanser" },
     sceneImage: {
-      src: "/hero/gm-hero-zo-routine.png",
-      tabletSrc: "/hero/gm-hero-zo-tablet.jpg",
-      mobileSrc: "/hero/gm-hero-zo-mobile.jpg",
+      src: "/hero/optimized/gm-hero-zo-routine.webp",
+      tabletSrc: "/hero/optimized/gm-hero-zo-tablet.webp",
+      mobileSrc: "/hero/optimized/gm-hero-zo-mobile.webp",
       alt: "Три средства ZO Skin Health: очищающее средство, сыворотка и полиш для домашнего ухода.",
       position: "72% center"
     },
@@ -224,9 +224,9 @@ const homeHeroSlides: HomeHeroSlide[] = [
     buttonLabel: "Подробнее о креме",
     action: { type: "product", productId: "angio-ceramide-restoring-cream" },
     sceneImage: {
-      src: "/hero/gm-hero-angio-routine.png",
-      tabletSrc: "/hero/gm-hero-daily-tablet.jpg",
-      mobileSrc: "/hero/gm-hero-daily-mobile.jpg",
+      src: "/hero/optimized/gm-hero-angio-routine.webp",
+      tabletSrc: "/hero/optimized/gm-hero-daily-tablet.webp",
+      mobileSrc: "/hero/optimized/gm-hero-daily-mobile.webp",
       alt: "Три средства Angiopharm: восстанавливающий крем, витаминная сыворотка и солнцезащитный флюид.",
       position: "70% center"
     },
@@ -245,9 +245,9 @@ const homeHeroSlides: HomeHeroSlide[] = [
     buttonLabel: "Смотреть уходы",
     action: { type: "product", productId: "angio-anti-couperose-serum" },
     sceneImage: {
-      src: "/hero/gm-hero-sensitive-care.jpg",
-      tabletSrc: "/hero/gm-hero-sensitive-tablet.jpg",
-      mobileSrc: "/hero/gm-hero-sensitive-mobile.jpg",
+      src: "/hero/optimized/gm-hero-sensitive-care.webp",
+      tabletSrc: "/hero/optimized/gm-hero-sensitive-tablet.webp",
+      mobileSrc: "/hero/optimized/gm-hero-sensitive-mobile.webp",
       alt: "Средства Angiopharm Anti Couperose и Azelaine Soft Cream для чувствительной кожи.",
       position: "right center"
     },
@@ -266,9 +266,9 @@ const homeHeroSlides: HomeHeroSlide[] = [
     buttonLabel: "Подробнее о средстве",
     action: { type: "product", productId: "angio-pdrn-restoring-serum" },
     sceneImage: {
-      src: "/hero/gm-hero-recovery-desktop.jpg",
-      tabletSrc: "/hero/gm-hero-recovery-tablet.jpg",
-      mobileSrc: "/hero/gm-hero-recovery-mobile.jpg",
+      src: "/hero/optimized/gm-hero-recovery-desktop.webp",
+      tabletSrc: "/hero/optimized/gm-hero-recovery-tablet.webp",
+      mobileSrc: "/hero/optimized/gm-hero-recovery-mobile.webp",
       alt: "Средства Angiopharm с церамидами, ПДРН и восстанавливающая маска для ухода после процедур.",
       position: "right center"
     },
@@ -866,21 +866,19 @@ function App() {
   );
 
   const activeFilters = [
-    searchQuery ? `Поиск: ${searchQuery}` : null,
-    ...selectedCategories.map((item) => {
-      const label = categories.find((entry) => entry.id === item)?.label ?? item;
-      return `Категория: ${label}`;
-    }),
-    ...selectedSkinTypes.map((item) => `Тип кожи: ${item}`),
-    ...selectedConcerns.map((item) => `Проблема: ${item}`),
-    ...selectedBrands.map((item) => `Бренд: ${item}`),
-    ...selectedIngredients.map((item) => `Актив: ${item}`),
-    ...selectedTextures.map((item) => `Текстура: ${item}`),
-    ...selectedZones.map((item) => `Зона: ${item}`),
-    priceRange.min !== catalogPriceBounds.min || priceRange.max !== catalogPriceBounds.max
-      ? `Цена: ${formatPrice(priceRange.min)} - ${formatPrice(priceRange.max)} ₽`
-      : null
-  ].filter((item): item is string => Boolean(item));
+    ...(searchQuery ? [{ label: `Поиск: ${searchQuery}`, remove: () => setSearchQuery("") }] : []),
+    ...selectedCategories.map(item => ({ label: `Категория: ${getCategoryLabel(item)}`, remove: () => setSelectedCategories(values => values.filter(value => value !== item)) })),
+    ...([
+      [selectedSkinTypes, setSelectedSkinTypes, "Тип кожи"],
+      [selectedConcerns, setSelectedConcerns, "Потребность"],
+      [selectedBrands, setSelectedBrands, "Бренд"],
+      [selectedIngredients, setSelectedIngredients, "Актив"],
+      [selectedTextures, setSelectedTextures, "Текстура"],
+      [selectedZones, setSelectedZones, "Зона"]
+    ] as const).flatMap(([values, setter, prefix]) => values.map(item => ({ label: `${prefix}: ${item}`, remove: () => setter(current => current.filter(value => value !== item)) }))),
+    ...(priceRange.min !== catalogPriceBounds.min || priceRange.max !== catalogPriceBounds.max
+      ? [{ label: `Цена: ${formatPrice(priceRange.min)} – ${formatPrice(priceRange.max)} ₽`, remove: () => setPriceRange(catalogPriceBounds) }] : [])
+  ];
   const hasCatalogToolbarMeta = activeFilters.length > 0 || showOnlyWithPhoto || showOnlyDoctorChoice;
 
   const updateHash = (nextHash: string, shouldScrollToAnchor = false) => {
@@ -1159,6 +1157,10 @@ function App() {
         </button>
       </div>
 
+      <button type="button" className="mobile-cart-shortcut" onClick={goToCart} aria-label={`Корзина, товаров: ${cartCount}`}>
+        <TopbarCartIcon />
+        {cartCount > 0 && <span>{cartCount > 99 ? "99+" : cartCount}</span>}
+      </button>
       <button
         type="button"
         className="topbar-menu-button"
@@ -1414,7 +1416,7 @@ function App() {
                   {activeFilters.length > 0 ? (
                     <div className="active-filters">
                       {activeFilters.map((item) => (
-                        <span key={item}>{item}</span>
+                        <button type="button" key={item.label} onClick={item.remove} aria-label={`Убрать фильтр: ${item.label}`}>{item.label}<span aria-hidden="true">×</span></button>
                       ))}
                     </div>
                   ) : null}
@@ -1719,6 +1721,9 @@ function App() {
                           <img
                             className="hero-slide-scene-image"
                             src={slide.sceneImage.src}
+                            loading={index === 0 ? "eager" : "lazy"}
+                            fetchPriority={index === 0 ? "high" : "low"}
+                            decoding="async"
                             alt={slide.sceneImage.alt}
                             style={{ objectPosition: slide.sceneImage.position ?? "center" }}
                           />

@@ -21,7 +21,7 @@ h1, h2, h3, p { overflow-wrap: anywhere; }
 .section-heading { align-items: start; }
 .section-heading > div { flex: 1 1 52%; }
 .section-heading > p { flex: 1 1 38%; max-width: 42ch; line-height: 1.7; }
-.section-heading h1, .shopping-help h1 { margin: 0; font-family: "Cormorant Garamond", Georgia, serif; font-size: clamp(30px, 4vw, 44px); line-height: 1.15; }
+.section-heading h1, .shopping-help h1 { margin: 0; font-family: "Cormorant Garamond Variable", Georgia, serif; font-size: clamp(30px, 4vw, 44px); line-height: 1.15; }
 .section-kicker { margin: 0 0 10px; }
 .section-heading h2, .section-heading h1 { margin: 0; }
 .button-primary, .button-secondary, .back-link { min-height: 46px; height: auto; padding: 12px 20px; line-height: 1.4; }
@@ -118,7 +118,7 @@ h1, h2, h3, p { overflow-wrap: anywhere; }
 .catalog-pagination-pages { flex-wrap: wrap; }
 .catalog-pagination-page, .catalog-pagination-nav { min-width: 44px; min-height: 44px; }
 .empty-state { display: grid; padding: clamp(24px, 4vw, 48px); }
-.empty-state h1, .empty-state h2 { margin: 0; font-family: "Cormorant Garamond", Georgia, serif; font-size: clamp(28px, 4vw, 40px); line-height: 1.2; }
+.empty-state h1, .empty-state h2 { margin: 0; font-family: "Cormorant Garamond Variable", Georgia, serif; font-size: clamp(28px, 4vw, 40px); line-height: 1.2; }
 .empty-state p { line-height: 1.7; }
 .favorites-main { width: 100%; }
 .detail-layout { align-items: start; }
@@ -290,4 +290,50 @@ h1, h2, h3, p { overflow-wrap: anywhere; }
 @media (min-width: 1024px) {
   .hero-card { margin-inline: 0; border-radius: 24px; }
   .hero-slide { padding-inline: 64px; }
+}
+
+/* Quiet surfaces let product photography and typography lead. */
+body { background: #f7f6f3; }
+.section-card { box-shadow: none; border: 1px solid #e8e7e3; }
+.page--home { gap: clamp(32px, 5vw, 64px); }
+.page--home > .section-card { background: transparent; border: 0; padding-inline: 0; }
+.section-heading h2 { font-size: clamp(30px, 3.2vw, 44px); line-height: 1.15; font-weight: 500; text-wrap: balance; }
+.section-kicker { color: #526779; letter-spacing: .14em; font-size: 11px; }
+.hero-card, .benefit-card, .product-card { box-shadow: none; }
+.hero-slide-title { text-wrap: balance; }
+.benefit-card { background: transparent; border: 0; border-radius: 0; border-bottom: 1px solid #dedfdc; }
+.category-card { background: #fff; border-radius: 16px; }
+.category-card-copy h3 { font-weight: 500; }
+.concern-card { background: #eef1ef; border-color: transparent; border-radius: 12px; }
+.concern-card:nth-child(2n) { background: #f0eeea; }
+.concern-card h3 { font-weight: 600; }
+.brand-tile { border-radius: 8px; }
+.brand-tile strong { letter-spacing: .035em; }
+.shopping-steps li { border-radius: 8px; background: #eeefec; }
+.product-card .product-title { font-family: "Manrope Variable", Arial, sans-serif; font-size: 16px; font-weight: 600; line-height: 1.5; }
+.product-card .product-pricing strong { font-family: "Manrope Variable", Arial, sans-serif; font-size: 19px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.product-card .product-media { background: #fafaf8; border-radius: 12px; }
+.active-filters button { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 8px 12px; border: 1px solid #cbd5dc; border-radius: 8px; background: #eef2f4; color: #344958; font: inherit; font-size: 13px; text-align: left; cursor: pointer; }
+.active-filters button span { padding: 0; font-size: 20px; }
+.mobile-cart-shortcut { display: none; }
+@media (max-width: 1023px) {
+  .topbar { grid-template-columns: minmax(0, 1fr) 44px 44px; gap: 10px; background: #fbfbfa; backdrop-filter: none; }
+  .topbar .brand-mark { min-width: 0; max-width: 100%; }
+  .topbar .brand-mark-media { width: min(100%, 190px); }
+  .topbar .brand-mark-image { max-width: 100%; height: auto; }
+  .mobile-cart-shortcut { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid #d4d9da; border-radius: 50%; background: white; color: #344958; cursor: pointer; }
+  .mobile-cart-shortcut svg { width: 20px; height: 20px; }
+  .mobile-cart-shortcut span { position: absolute; right: -3px; top: -3px; min-width: 19px; padding: 2px 4px; border-radius: 20px; background: #526f8b; color: white; font-size: 10px; line-height: 15px; }
+  .topbar-menu-button { width: 44px; height: 44px; }
+}
+@media (max-width: 767px) {
+  .page--home { gap: 36px; }
+  .section-heading { gap: 12px; }
+  .section-heading > p { margin: 0; font-size: 14px; }
+  .product-card .product-title { font-size: 14px; }
+  .product-card .product-pricing strong { font-size: 17px; }
+  .concern-card { gap: 8px; padding: 20px; }
+}
+@media (min-width: 380px) and (max-width: 767px) {
+  .doctor-grid, .detail-related-grid, .cart-recommendations-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
