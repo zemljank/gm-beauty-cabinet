@@ -31,17 +31,6 @@ function FavoriteIcon({ filled = false }: { filled?: boolean }) {
   );
 }
 
-const usageByCategory = {
-  cleanser: "Используйте как первый этап ритуала для деликатного очищения кожи утром и вечером.",
-  toner: "Подходит как промежуточный шаг после очищения и перед сывороткой или кремом.",
-  serum: "Наносите на чистую кожу как концентрированный этап ритуала перед кремом.",
-  cream: "Используйте как завершающий этап ухода для комфорта, защиты и восстановления.",
-  mask: "Подключайте 1-2 раза в неделю как усиление основного домашнего ухода.",
-  set: "Набор удобно использовать как готовый ритуал или как знакомство с брендом.",
-  body: "Добавляйте в домашний ритуал после душа или по мере ощущения сухости и стянутости.",
-  "sun-care": "Наносите финальным слоем дневного ухода, особенно перед выходом на улицу."
-} as const;
-
 export default function ProductDetailView({
   product,
   relatedProducts,
@@ -57,8 +46,8 @@ export default function ProductDetailView({
 }: ProductDetailViewProps) {
   const routineCards = [
     {
-      title: "Когда использовать",
-      text: usageByCategory[product.category]
+      title: "Описание средства",
+      text: product.shortDescription
     },
     {
       title: "Основной запрос кожи",
@@ -108,7 +97,7 @@ export default function ProductDetailView({
 
             <div className="detail-actions">
               <button type="button" className="button-primary" onClick={() => onAddToCart(product.id)}>
-                Добавить в корзину
+                {cartQuantityById.get(product.id) ? `Добавить ещё · в корзине ${cartQuantityById.get(product.id)}` : "Добавить в корзину"}
               </button>
               <button type="button" className="button-secondary" onClick={onOpenCart}>
                 Открыть корзину
@@ -124,6 +113,7 @@ export default function ProductDetailView({
               </button>
             </div>
 
+            <p className="detail-order-note">Наличие и актуальную стоимость уточнит администратор при заказе.</p>
             <div className="detail-facts">
               <article>
                 <span>Бренд</span>
@@ -149,8 +139,8 @@ export default function ProductDetailView({
             <h2>Как встроить средство в домашний уход</h2>
           </div>
           <p>
-            На странице товара уже можно показывать не только цену и фото, но и контекст:
-            для чего средство, на каком этапе ритуала оно уместно и с чем хорошо сочетается.
+            Сравните назначение и формат средства с вашим текущим уходом.
+            Способ и частоту применения уточняйте по инструкции на упаковке.
           </p>
         </div>
 
@@ -167,12 +157,12 @@ export default function ProductDetailView({
       <section className="detail-section section-card">
         <div className="section-heading">
           <div>
-            <p className="section-kicker">Сочетается с ритуалом</p>
-            <h2>Похожие и комплементарные средства</h2>
+            <p className="section-kicker">Продолжить выбор</p>
+            <h2>Вам также может быть интересно</h2>
           </div>
           <p>
-            Этот блок нужен, чтобы карточка товара не обрывалась на одном SKU, а вела дальше
-            по каталогу, как это обычно происходит в живом магазине.
+            Другие средства того же бренда, категории или со схожими задачами.
+            Откройте карточки и сравните описания.
           </p>
         </div>
 

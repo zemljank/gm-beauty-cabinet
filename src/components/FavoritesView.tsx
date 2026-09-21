@@ -30,15 +30,15 @@ export default function FavoritesView({
         <section className="section-card catalog-hero-card favorites-hero-card">
           <div className="catalog-hero-copy">
             <h1>Избранное</h1>
-            <p>Сохраняй интересные позиции из каталога, чтобы быстро вернуться к ним позже и спокойно собрать персональный заказ.</p>
+            <p>Нажмите на сердечко в карточке товара, чтобы сохранить средство и вернуться к нему позже.</p>
           </div>
         </section>
 
         <section className="section-card section-card--soft empty-state favorites-empty-state">
           <div className="favorites-empty-copy">
-            <h1>Пока пусто</h1>
+            <h2>Сохраните то, что понравилось</h2>
             <p>
-              Добавь несколько средств из каталога, и здесь появится спокойная подборка, к которой удобно возвращаться перед оформлением заказа.
+              Здесь будет ваша подборка. Избранное сохраняется в этом браузере — можно продолжить выбор в удобное время.
             </p>
             <button type="button" className="button-primary" onClick={onBack}>
               Перейти в каталог
@@ -54,7 +54,7 @@ export default function FavoritesView({
       <section className="section-card catalog-hero-card favorites-hero-card">
         <div className="catalog-hero-copy">
           <h1>Избранное</h1>
-          <p>Сохраняй интересные позиции, сравнивай их между собой и в один момент переноси нужные средства в корзину.</p>
+          <p>Все сохранённые средства в одном месте. Откройте карточку для подробностей или добавьте средство в корзину.</p>
         </div>
       </section>
 

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import ProductCard from "./ProductCard";
 import { formatPrice } from "../lib/catalog";
 import type { ProductItem } from "../types";
@@ -40,15 +41,32 @@ export default function CartView({
   onRemove,
   onToggleFavorite
 }: CartViewProps) {
+  const [isListOpen, setIsListOpen] = useState(false);
+  const [copyStatus, setCopyStatus] = useState("");
+  const orderText = [
+    "Здравствуйте! Хочу уточнить наличие и заказать средства:",
+    ...items.map(({ product, quantity }, index) => `${index + 1}. ${product.brand} ${product.name}, ${product.volume} — ${quantity} шт. × ${formatPrice(product.price)} ₽`),
+    `Сумма по каталогу: ${formatPrice(subtotal)} ₽.`,
+    "Подскажите, пожалуйста, актуальную стоимость и условия получения."
+  ].join("\n");
+  const copyOrder = async () => {
+    try {
+      await navigator.clipboard.writeText(orderText);
+      setCopyStatus("Список скопирован. Теперь его можно отправить администратору.");
+    } catch {
+      setCopyStatus("Выделите и скопируйте текст из поля ниже.");
+    }
+  };
+
   if (items.length === 0) {
     return (
       <section className="cart-shell section-card section-card--soft">
         <div className="empty-state">
           <p className="section-kicker">Корзина</p>
-          <h1>Пока пусто</h1>
+          <h1>В корзине пока нет средств</h1>
           <p>
-            Добавь несколько средств из каталога, и здесь появится аккуратная корзина с
-            рекомендациями к заказу.
+            Добавьте средства из каталога. Здесь можно изменить количество, проверить сумму
+            и подготовить список для администратора.
           </p>
           <button type="button" className="button-primary" onClick={onBack}>
             Вернуться в каталог
@@ -101,11 +119,11 @@ export default function CartView({
                 <div className="cart-price">{formatPrice(product.price)} ₽</div>
 
                 <div className="cart-qty-control">
-                  <button type="button" onClick={() => onIncrease(product.id)}>
+                  <button type="button" aria-label={`Увеличить количество ${product.name}`} onClick={() => onIncrease(product.id)}>
                     +
                   </button>
                   <span>{quantity}</span>
-                  <button type="button" onClick={() => onDecrease(product.id)}>
+                  <button type="button" aria-label={`Уменьшить количество ${product.name}`} onClick={() => onDecrease(product.id)}>
                     -
                   </button>
                 </div>
@@ -121,7 +139,7 @@ export default function CartView({
           </div>
 
           <aside className="cart-summary">
-            <h2>Ваш заказ</h2>
+            <h2>Ваш список</h2>
 
             <div className="cart-summary-lines">
               <p>
@@ -134,26 +152,26 @@ export default function CartView({
               </p>
               <p>
                 <span>Доставка</span>
-                <strong>Бесплатно</strong>
+                <strong>Уточняется</strong>
               </p>
             </div>
 
             <div className="cart-summary-total">
-              <span>Всего к оплате</span>
+              <span>Сумма товаров</span>
               <strong>{formatPrice(subtotal)} ₽</strong>
             </div>
 
-            <button type="button" className="button-primary cart-submit-button">
-              Оформить заказ
+            <p className="cart-summary-note">Наличие, итоговую стоимость и условия получения подтвердит администратор.</p>
+            <button type="button" className="button-primary cart-submit-button" aria-expanded={isListOpen} aria-controls="order-list" onClick={() => setIsListOpen((open) => !open)}>
+              {isListOpen ? "Скрыть список" : "Подготовить список"}
             </button>
-
-            <label className="promo-field">
-              <span>Промокод</span>
-              <div>
-                <input type="text" placeholder="Введите промокод" />
-                <button type="button">Применить</button>
-              </div>
-            </label>
+            {isListOpen && <div id="order-list" className="order-list">
+              <label htmlFor="order-text">Список для администратора</label>
+              <textarea id="order-text" readOnly value={orderText} rows={9} onFocus={(event) => event.currentTarget.select()} />
+              <button type="button" className="button-secondary" onClick={copyOrder}>Скопировать список</button>
+              <p role="status">{copyStatus}</p>
+              <a className="content-link" href="https://gm-beauty.ru/" target="_blank" rel="noreferrer">Перейти на сайт клиники ↗</a>
+            </div>}
           </aside>
         </div>
       </section>
@@ -162,11 +180,11 @@ export default function CartView({
         <div className="section-heading">
           <div>
             <p className="section-kicker">Добавить к заказу</p>
-            <h2>Средства, которые хорошо дополняют корзину</h2>
+            <h2>Посмотрите также</h2>
           </div>
           <p>
-            Этот блок продолжает механику интернет-магазина: из корзины можно не только
-            оформить заказ, но и спокойно добавить еще несколько подходящих позиций.
+            Посмотрите другие средства каталога. Откройте карточку, чтобы изучить описание
+            и решить, что добавить в свой список.
           </p>
         </div>
 

@@ -170,7 +170,7 @@ export function filterProducts(products: ProductItem[], filters: CatalogFilters)
 
     if (
       normalizedConcerns.length > 0 &&
-      !normalizedConcerns.some((item) => haystack.includes(item))
+      !normalizedConcerns.some((item) => matchesConcern(haystack, item))
     ) {
       return false;
     }
@@ -404,6 +404,19 @@ export function getProductFacets(product: ProductItem): ProductFacets {
     textures: sortByConfiguredOrder(textures, textureOrder),
     zones: sortByConfiguredOrder(zones, zoneOrder)
   };
+}
+
+// Match the catalogue's existing wording across grammatical forms.
+function matchesConcern(text: string, concern: string) {
+  const stems: Record<string, string[]> = {
+    "пигментация": ["пигмент", "ровный тон", "осветлен"],
+    "акне": ["акне", "высыпан", "проблемная кожа"],
+    "чувствительность": ["чувств", "купероз", "покраснен"],
+    "антивозрастное": ["антивозраст", "возрастная кожа", "морщин"],
+    "восстановление": ["восстанов"],
+    "увлажнение": ["увлажн"]
+  };
+  return (stems[concern] ?? [concern]).some((term) => text.includes(term));
 }
 
 function normalizeText(value: string) {
